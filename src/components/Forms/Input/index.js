@@ -30,6 +30,7 @@ import React, {
   PureComponent,
 } from 'react'
 import PropTypes from 'prop-types'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import Confirmation from 'components/Confirmation'
 import ErrorValidation from 'components/ErrorValidation'
@@ -47,6 +48,7 @@ class Input extends PureComponent {
       isCorrect: true,
       errors: [],
       className: 'win-textbox',
+      hideContentDialog: true,
     }
   }
 
@@ -105,13 +107,9 @@ class Input extends PureComponent {
 
   /**
    * Delete an email of the list
-   * @async
-   * @function deleteInput
+   * @function deleteEmail
    */
-  deleteInput = async () => {
-    const isOK = await Confirmation.isOK(this.contentDialog)
-    if (isOK) this.props.delete(this.props.name)
-  }
+  deleteEmail = () => this.setState({ hideContentDialog: false })
 
   /**
    * Render component
@@ -120,26 +118,18 @@ class Input extends PureComponent {
   render() {
     const deleteIcon = this.props.delete
       ? (
-        <span
-          className="iconFont deleteIcon"
+        <Icon
+          iconName="Delete"
           style={{ margin: 10, fontSize: 18 }}
-          onClick={this.deleteInput}
-          role="button"
-          tabIndex="0"
+          onClick={this.deleteEmail}
         />
       )
       : undefined
     return (
       <div className="froms__col">
-        {
-          this.props.label
-          && (
-            <p>
-              {this.props.label}
-            </p>
-          )
-        }
-
+        <p>
+          {this.props.label}
+        </p>
         <input
           type={this.props.type}
           className={this.state.className}
@@ -159,9 +149,15 @@ class Input extends PureComponent {
           this.props.delete
             ? (
               <Confirmation
+                hideDialog={this.state.hideContentDialog}
                 title={`${I18n.t('commons.delete')} ${this.props.label}`}
                 message={this.props.value}
-                reference={(el) => { this.contentDialog = el }}
+                isOK={() => {
+                  this.setState({ hideContentDialog: true }, () => {
+                    this.props.delete(this.props.name)
+                  })
+                }}
+                cancel={() => this.setState({ hideContentDialog: true })}
               />
             )
             : <span />

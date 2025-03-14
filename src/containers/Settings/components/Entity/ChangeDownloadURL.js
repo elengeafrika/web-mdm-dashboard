@@ -108,7 +108,7 @@ class ChangeDownloadURL extends PureComponent {
     return this.state.isLoading
       ? <Loading message={`${I18n.t('commons.saving')}...`} />
       : (
-        <ContentPane style={{ marginLeft: 10 }}>
+        <ContentPane>
           <div className="list-element">
             {I18n.t('settings.entity.url')}
             <div className="list-element__detail">

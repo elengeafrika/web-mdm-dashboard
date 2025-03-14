@@ -32,13 +32,13 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 import I18n from 'shared/i18n'
+import { Icon } from 'office-ui-fabric-react'
 import itemtype from 'shared/itemtype'
 import publicURL from 'shared/publicURL'
 import IconItemList from 'components/IconItemList'
 import Confirmation from 'components/Confirmation'
 import Loading from 'components/Loading'
 import ContentPane from 'components/ContentPane'
-import EditNumbers from './EditNumbers'
 
 /**
  * @class Main
@@ -54,8 +54,7 @@ export default class Main extends PureComponent {
       update: this.props.update,
       data: undefined,
       sendingPing: false,
-      changeNumbers: false,
-      numbers: [],
+      hideContentDialog: true,
     }
   }
 
@@ -65,8 +64,6 @@ export default class Main extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.id !== this.state.id || prevState.update !== this.state.update) {
-      this.handleRefresh()
-    } else if (this.state.changeNumbers === 2) {
       this.handleRefresh()
     }
   }
@@ -99,33 +96,8 @@ export default class Main extends PureComponent {
           id,
         })
 
-        let numbers = []
-
-        const deviceSimcard = await this.props.glpi.genericRequest({
-          path: `${itemtype.Item_DeviceSimcard}/?searchText[itemtype]=${itemtype.Computer}&searchText[items_id]=${id}`,
-        })
-
-        if (deviceSimcard.length > 0) {
-          const lineID = deviceSimcard.map(e => ({
-            itemtype: itemtype.Line,
-            items_id: e.lines_id,
-          }))
-
-          const lines = await this.props.glpi.getMultipleItems({
-            items: lineID,
-          })
-
-          numbers = lines.map(line => ({
-            id: line.id,
-            value: line.name,
-          }))
-        }
-
         this.setState({
           data,
-          numbers,
-          isLoading: false,
-          changeNumbers: false,
         })
       } catch (error) {
         this.props.toast.setNotification(this.props.handleMessage({
@@ -138,38 +110,41 @@ export default class Main extends PureComponent {
   }
 
   /**
+   * Show the content dialog
+   * @function showContentDialog
+   */
+  showContentDialog = () => this.setState({ hideContentDialog: false })
+
+
+  /**
    * handle delete selected device
-   * @async
    * @function handleRefresh
    */
   handleDelete = async () => {
-    const isOK = await Confirmation.isOK(this.contentDialog)
-    if (isOK) {
-      this.setState({
-        isLoading: true,
-      })
+    this.setState({
+      isLoading: true,
+    })
 
-      this.props.glpi.deleteItem({
-        itemtype: itemtype.PluginFlyvemdmAgent,
-        id: this.state.id,
+    this.props.glpi.deleteItem({
+      itemtype: itemtype.PluginFlyvemdmAgent,
+      id: this.state.id,
+    })
+      .then(() => {
+        this.props.toast.setNotification({
+          title: I18n.t('commons.success'),
+          body: I18n.t('notifications.device_successfully_removed'),
+          type: 'success',
+        })
+        this.props.changeSelectionMode(false)
+        this.props.history.push(`${publicURL}/app/devices`)
+        this.props.changeAction('reload')
       })
-        .then(() => {
-          this.props.toast.setNotification({
-            title: I18n.t('commons.success'),
-            body: I18n.t('notifications.device_successfully_removed'),
-            type: 'success',
-          })
-          this.props.changeSelectionMode(false)
-          this.props.history.push(`${publicURL}/app/devices`)
-          this.props.changeAction('reload')
-        })
-        .catch((error) => {
-          this.props.toast.setNotification(this.props.handleMessage({
-            type: 'alert',
-            message: error,
-          }))
-        })
-    }
+      .catch((error) => {
+        this.props.toast.setNotification(this.props.handleMessage({
+          type: 'alert',
+          message: error,
+        }))
+      })
   }
 
   /**
@@ -224,111 +199,9 @@ export default class Main extends PureComponent {
     })
   }
 
-  changeNumbers = async (newNumbers, deleteNumbers) => {
-    this.setState({
-      isLoading: true,
-      changeNumbers: 0,
-    })
-
-    // Update and add numbers
-    newNumbers.forEach(async (newNumber, index) => {
-      if (newNumber.id === 0) {
-        const deviceSimcard = await this.props.glpi.addItem({
-          itemtype: itemtype.DeviceSimcard,
-          input: {},
-        })
-
-        const line = await this.props.glpi.addItem({
-          itemtype: itemtype.Line,
-          input: { name: newNumber.value },
-        })
-
-        await this.props.glpi.addItem({
-          itemtype: itemtype.Item_DeviceSimcard,
-          input: {
-            itemtype: itemtype.Computer,
-            items_id: this.state.id,
-            lines_id: line.id,
-            devicesimcards_id: deviceSimcard.id,
-          },
-        })
-      } else if (newNumber.value) {
-        await this.props.glpi.updateItem({
-          itemtype: itemtype.Line,
-          id: newNumber.id,
-          input: {
-            name: newNumber.value,
-          },
-        })
-      }
-
-      // Counter to update the device data
-      if (newNumbers.length === index + 1) {
-        // validator used to update the data
-        // (when this value reaches two the component is updated)
-        const update = deleteNumbers.length > 0
-          ? 1
-          : 2
-        this.setState(prevState => ({
-          changeNumbers: prevState.changeNumbers + update,
-        }))
-      }
-    })
-
-    // Delete numbers
-    const itemDeviceSimcard = await this.props.glpi.getAllItems({
-      itemtype: itemtype.Item_DeviceSimcard,
-      queryString: {
-        searchText: {
-          itemtype: itemtype.Computer,
-          items_id: this.state.id,
-        },
-      },
-    })
-
-    await deleteNumbers.forEach(async (numberID, index) => {
-      let deviceSimcard
-
-      itemDeviceSimcard.forEach((x) => {
-        if (x.lines_id === numberID) {
-          deviceSimcard = x
-        }
-      })
-
-      if (deviceSimcard) {
-        await this.props.glpi.deleteItem({
-          itemtype: itemtype.Line,
-          id: numberID,
-        })
-
-        await this.props.glpi.deleteItem({
-          itemtype: itemtype.DeviceSimcard,
-          id: deviceSimcard.devicesimcards_id,
-        })
-
-        await this.props.glpi.deleteItem({
-          itemtype: itemtype.Item_DeviceSimcard,
-          id: deviceSimcard.id,
-        })
-
-        // Counter to update the device data
-        if (deleteNumbers.length === index + 1) {
-          // validator used to update the data
-          // (when this value reaches two the component is updated)
-          const update = newNumbers.length > 0
-            ? 1
-            : 2
-          this.setState(prevState => ({
-            changeNumbers: prevState.changeNumbers + update,
-          }))
-        }
-      }
-    })
-  }
-
   render() {
     let renderComponent
-    if (!this.state.data || !this.state.numbers || this.state.isLoading) {
+    if (this.state.data === undefined || this.state.isLoading) {
       renderComponent = (
         <Loading message={`${I18n.t('commons.loading')}...`} />
       )
@@ -349,142 +222,89 @@ export default class Main extends PureComponent {
           <IconItemList size={72} />
         )
       }
-      if (this.state.changeNumbers) {
-        renderComponent = (
-          <ContentPane className="devices">
-            <EditNumbers
-              numbers={this.state.numbers}
-              save={this.changeNumbers}
-              cancel={() => this.setState({ changeNumbers: false })}
-            />
-          </ContentPane>
-        )
-      } else {
-        renderComponent = (
-          <ContentPane className="devices">
-            <div className="content-header">
-              <div className="item-info">
-                {iconComponent}
-                <div>
-                  <div className="item-info__name">
-                    {this.state.data.name}
-                  </div>
-                  <div className="item-info__message">
+      renderComponent = (
+        <ContentPane className="devices">
+          <div className="content-header">
+            <div className="item-info">
+              {iconComponent}
+              <div>
+                <div className="item-info__name">
+                  {this.state.data.name}
+                </div>
+                <div className="item-info__message">
+                  {
+                    this.state.data.is_online === 1
+                      ? I18n.t('commons.online')
+                      : I18n.t('commons.offline')
+                  }
+                </div>
+                <div className="item-info__source">
+                  {this.state.data.last_contact}
+                  &nbsp;
+                  {' '}
+                  {I18n.t('devices.main.last_contact')}
+                </div>
+                <div style={{ overflow: 'auto' }}>
+                  <div>
+                    <button
+                      className="btn btn--secondary"
+                      style={{ float: 'left', marginTop: 5, marginBottom: 5 }}
+                      onClick={this.ping}
+                      type="button"
+                    >
+                      {I18n.t('commons.ping')}
+                    </button>
                     {
-                      this.state.data.is_online === 1
-                        ? I18n.t('commons.online')
-                        : I18n.t('commons.offline')
+                      this.state.sendingPing
+                        ? <Loading small />
+                        : ''
                     }
                   </div>
-                  <div className="item-info__source">
-                    {this.state.data.last_contact}
-                    &nbsp;
-                    {' '}
-                    {I18n.t('devices.main.last_contact')}
-                  </div>
-                  <div style={{ overflow: 'auto' }}>
-                    <div>
-                      <button
-                        className="btn btn--secondary"
-                        style={{ float: 'left', marginTop: 5, marginBottom: 5 }}
-                        onClick={this.ping}
-                        type="button"
-                      >
-                        {I18n.t('commons.ping')}
-                      </button>
-                      {
-                        this.state.sendingPing
-                          ? <Loading small />
-                          : ''
-                      }
-                    </div>
-                  </div>
-                  <div>
-                    <span
-                      className="iconFont editIcon"
-                      style={{ marginRight: '20px', fontSize: '20px' }}
-                      onClick={this.handleEdit}
-                      role="button"
-                      tabIndex="0"
-                    />
-                    <span
-                      className="iconFont deleteIcon"
-                      style={{ marginRight: '20px', fontSize: '20px' }}
-                      onClick={this.handleDelete}
-                      role="button"
-                      tabIndex="0"
-                    />
-                  </div>
+                </div>
+                <div>
+                  <Icon
+                    iconName="Edit"
+                    style={{ marginRight: '20px', fontSize: '20px' }}
+                    onClick={this.handleEdit}
+                  />
+                  <Icon
+                    iconName="Delete"
+                    style={{ marginRight: '20px', fontSize: '20px' }}
+                    onClick={this.showContentDialog}
+                  />
                 </div>
               </div>
             </div>
-            <div className="separator" />
-            <div className="content-info">
-              <div className="title">
-                {I18n.t('commons.version')}
-              </div>
-              <div style={{ paddingLeft: 20 }}>
-                {this.state.data.version}
-              </div>
-              <div className="title">
-                {I18n.t('commons.type')}
-              </div>
-              <div style={{ paddingLeft: 20 }}>
-                {this.state.data.mdm_type}
-              </div>
-
-              <div className="title">
-                {I18n.t('commons.notification_type')}
-              </div>
-              <div style={{ paddingLeft: 20 }}>
-                {this.state.data.notification_type}
-              </div>
-
-              <div className="title">
-                {I18n.t('commons.telephone_numbers')}
-              </div>
-
-              {
-                this.state.numbers.map((number, index) => (
-                  <div
-                    key={`cell-number-${index.toString()}`}
-                    style={{ paddingLeft: 20 }}
-                  >
-                    <a href={`tel:${number.value}`}>
-                      { number.value }
-                    </a>
-                  </div>
-                ))
-              }
-              {
-                this.state.numbers.length === 0 && (
-                  <div style={{ padding: '0 20px' }}>
-                    {I18n.t('commons.not_available')}
-                  </div>
-                )
-              }
-
-              <div style={{ padding: '10px 20px' }}>
-                <button
-                  className="btn btn--secondary"
-                  onClick={() => {
-                    this.setState({ changeNumbers: true })
-                  }}
-                  type="button"
-                >
-                  {I18n.t('commons.edit_numbers')}
-                </button>
-              </div>
+          </div>
+          <div className="separator" />
+          <div className="content-info">
+            <div className="title">
+              {I18n.t('commons.version')}
             </div>
+            <div style={{ paddingLeft: 20 }}>
+              {this.state.data.version}
+            </div>
+            <div className="title">
+              {I18n.t('commons.type')}
+            </div>
+            <div style={{ paddingLeft: 20 }}>
+              {this.state.data.mdm_type}
+            </div>
+          </div>
 
-            <Confirmation
-              title={I18n.t('devices.delete')}
-              message={this.state.data.name}
-              reference={(el) => { this.contentDialog = el }}
-            />
-          </ContentPane>
-        )
-      }
+          <Confirmation
+            hideDialog={this.state.hideContentDialog}
+            title={I18n.t('devices.delete')}
+            message={this.state.data.name}
+            isOK={() => {
+              this.setState({ hideContentDialog: true }, () => {
+                this.handleDelete()
+              })
+            }}
+            cancel={() => this.setState({ hideContentDialog: true })}
+          />
+        </ContentPane>
+      )
     }
     return renderComponent
   }

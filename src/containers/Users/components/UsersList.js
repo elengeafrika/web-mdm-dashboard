@@ -33,6 +33,7 @@ import React, {
 import PropTypes from 'prop-types'
 import ReactWinJS from 'react-winjs'
 import WinJS from 'winjs'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import BuildItemList from 'shared/BuildItemList'
 import itemtype from 'shared/itemtype'
@@ -86,6 +87,7 @@ export default class UsersList extends PureComponent {
         page: 1,
         count: 15,
       },
+      hideContentDialog: true,
     }
   }
 
@@ -211,12 +213,27 @@ export default class UsersList extends PureComponent {
   }
 
   /**
-   * Delete users
-   * @function handleDelete
+   * Open the mass edition page
+   * @function handleEdit
+   */
+  handleEdit = () => {
+    const path = `${publicURL}/app/users/edit`
+    this.props.history.push(path)
+  }
+
+  /**
+   * Show the content dialog
+   * @function showContentDialog
+   */
+  showContentDialog = () => this.setState({ hideContentDialog: false })
+
+  /**
+   * handle delete selected users
+   * @function handleSelectionChanged
+   * @param {object} eventObject
    * @async
    */
-  handleDelete = async () => {
-    const isOK = await Confirmation.isOK(this.contentDialog)
+  handleDelete = async (isOK) => {
     if (isOK) {
       const itemListToDelete = this.props.selectedItems.map(item => ({
         id: item['User.id'],
@@ -370,7 +387,7 @@ export default class UsersList extends PureComponent {
         label={I18n.t('commons.delete')}
         priority={0}
         disabled={this.props.selectedItems.length === 0}
-        onClick={this.handleDelete}
+        onClick={this.showContentDialog}
       />
     )
 
@@ -381,7 +398,7 @@ export default class UsersList extends PureComponent {
         label={I18n.t('commons.edit')}
         priority={0}
         disabled={this.props.selectedItems.length === 0}
-        onClick={() => this.props.history.push(`${publicURL}/app/users/edit`)}
+        onClick={this.handleEdit}
       />
     )
 
@@ -393,8 +410,8 @@ export default class UsersList extends PureComponent {
           style={{ cursor: 'pointer', color: '#158784' }}
           role="presentation"
         >
-          <span
-            className="iconFont refreshIcon"
+          <Icon
+            iconName="Refresh"
             style={{ padding: '10px', fontSize: '20px' }}
           />
           <span>
@@ -436,25 +453,12 @@ export default class UsersList extends PureComponent {
       <React.Fragment>
         <ReactWinJS.ToolBar ref={(toolBar) => { this.toolBar = toolBar }} className="listToolBar">
           <ReactWinJS.ToolBar.Button
-            key="add"
-            icon="add"
-            label={I18n.t('commons.add')}
-            priority={1}
-            onClick={() => {
-              this.props.changeSelectionMode(false)
-              this.props.changeSelectedItems([])
-              this.props.history.push(`${publicURL}/app/users/add`)
-            }}
-          />
-
-          <ReactWinJS.ToolBar.Button
             key="sort"
             icon="sort"
             label={I18n.t('commons.sort')}
             priority={1}
             onClick={this.handleSort}
           />
-
           <ReactWinJS.ToolBar.Button
             key="refresh"
             icon="refresh"
@@ -479,9 +483,19 @@ export default class UsersList extends PureComponent {
         { listComponent }
 
         <Confirmation
+          hideDialog={this.state.hideContentDialog}
           title={I18n.t('users.delete')}
           message={`${this.props.selectedItems.length} ${I18n.t('commons.users')}`}
-          reference={(el) => { this.contentDialog = el }}
+          isOK={() => {
+            this.setState({ hideContentDialog: true }, () => {
+              this.handleDelete(true)
+            })
+          }}
+          cancel={() => {
+            this.setState({ hideContentDialog: true }, () => {
+              this.handleDelete(false)
+            })
+          }}
         />
       </React.Fragment>
     )

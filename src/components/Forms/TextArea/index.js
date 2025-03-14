@@ -37,14 +37,9 @@ import PropTypes from 'prop-types'
  */
 const TextArea = props => (
   <div className="froms__col">
-    {
-      props.label
-      && (
-        <p>
-          {props.label}
-        </p>
-      )
-    }
+    <p>
+      {props.label}
+    </p>
     <textarea
       rows={props.rows}
       className="win-textarea"

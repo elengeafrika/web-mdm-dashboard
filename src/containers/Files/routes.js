@@ -27,8 +27,12 @@
  */
 
 /** import dependencies */
-import withAsyncComponent from 'hoc/withAsyncComponent'
 import I18n from 'shared/i18n'
+import EmptyMessage from 'components/EmptyMessage'
+import ErrorPage from 'components/ErrorPage'
+import FilesAdd from './components/FilesAdd'
+import FilesEdit from './components/FilesEdit'
+import FilesContent from './components/FilesContent'
 
 /**
  * Represents all routes from Files section
@@ -38,37 +42,37 @@ import I18n from 'shared/i18n'
 const routes = [{
   path: '/',
   name: I18n.t('commons.no_selection'),
-  component: withAsyncComponent(() => import('components/EmptyMessage')),
+  component: EmptyMessage,
   exact: true,
 },
 {
   path: '/error',
   name: I18n.t('commons.error'),
-  component: withAsyncComponent(() => import('components/ErrorPage')),
+  component: ErrorPage,
   exact: true,
 },
 {
   path: '/add',
   name: I18n.t('commons.add'),
-  component: withAsyncComponent(() => import('./components/FilesAdd')),
+  component: FilesAdd,
   exact: true,
 },
 {
   path: '/edit',
   name: I18n.t('commons.edit'),
-  component: withAsyncComponent(() => import('./components/FilesEdit')),
+  component: FilesEdit,
   exact: true,
 },
 {
   path: '/:id/edit',
   name: I18n.t('commons.edit_one'),
-  component: withAsyncComponent(() => import('./components/FilesEdit')),
+  component: FilesEdit,
   exact: true,
 },
 {
   path: '/:id',
   name: I18n.t('commons.selected'),
-  component: withAsyncComponent(() => import('./components/FilesContent')),
+  component: FilesContent,
   exact: false,
 },
 ]

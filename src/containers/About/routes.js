@@ -27,7 +27,14 @@
  */
 
 /** import dependencies */
-import withAsyncComponent from 'hoc/withAsyncComponent'
+import EmptyMessage from 'components/EmptyMessage'
+import Overview from './components/Overview'
+import SystemInformation from './components/SystemInformation'
+import HelpCenter from './components/HelpCenter'
+import Contact from './components/Contact'
+import ReleaseNotes from './components/ReleaseNotes'
+import TermsOfUse from './components/TermsOfUse'
+import Licence from './components/License'
 
 /**
  * Represents all private routes from About
@@ -37,49 +44,49 @@ import withAsyncComponent from 'hoc/withAsyncComponent'
 const routes = [{
   path: '/',
   name: 'commons.no_selection',
-  component: withAsyncComponent(() => import('components/EmptyMessage')),
+  component: EmptyMessage,
   exact: true,
 },
 {
   path: '/overview',
   name: 'about.overview.title',
-  component: withAsyncComponent(() => import('./components/Overview')),
+  component: Overview,
   exact: true,
 },
 {
   path: '/system',
   name: 'about.system_information.title',
-  component: withAsyncComponent(() => import('./components/SystemInformation')),
+  component: SystemInformation,
   exact: false,
 },
 {
   path: '/help',
   name: 'about.help_center.title',
-  component: withAsyncComponent(() => import('./components/HelpCenter')),
+  component: HelpCenter,
   exact: false,
 },
 {
   path: '/contact',
   name: 'about.contact.title',
-  component: withAsyncComponent(() => import('./components/Contact')),
+  component: Contact,
   exact: false,
 },
 {
   path: '/release',
   name: 'about.release_notes.title',
-  component: withAsyncComponent(() => import('./components/ReleaseNotes')),
+  component: ReleaseNotes,
   exact: false,
 },
 {
   path: '/term',
   name: 'about.term_of_use.title',
-  component: withAsyncComponent(() => import('./components/TermsOfUse')),
+  component: TermsOfUse,
   exact: false,
 },
 {
   path: '/license',
   name: 'about.license.title',
-  component: withAsyncComponent(() => import('./components/License')),
+  component: Licence,
   exact: false,
 },
 ]

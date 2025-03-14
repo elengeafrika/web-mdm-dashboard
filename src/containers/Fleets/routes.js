@@ -27,8 +27,12 @@
  */
 
 /** import dependencies */
-import withAsyncComponent from 'hoc/withAsyncComponent'
 import I18n from 'shared/i18n'
+import EmptyMessage from 'components/EmptyMessage'
+import ErrorPage from 'components/ErrorPage'
+import FleetsContent from './components/FleetsContent'
+import DevicesAssociated from './components/DevicesAssociated'
+import FleetsEdit from './components/FleetsEdit'
 
 /**
  * Represents all private routes from Fleets
@@ -39,37 +43,37 @@ const routes = [
   {
     path: '/',
     name: I18n.t('commons.no_selection'),
-    component: withAsyncComponent(() => import('components/EmptyMessage')),
+    component: EmptyMessage,
     exact: true,
   },
   {
     path: '/error',
     name: I18n.t('commons.error'),
-    component: withAsyncComponent(() => import('components/ErrorPage')),
+    component: ErrorPage,
     exact: true,
   },
   {
     path: '/edit',
     name: I18n.t('commons.edit'),
-    component: withAsyncComponent(() => import('./components/FleetsEdit')),
+    component: FleetsEdit,
     exact: true,
   },
   {
     path: '/:id',
     name: I18n.t('commons.fleet'),
-    component: withAsyncComponent(() => import('./components/FleetsContent')),
+    component: FleetsContent,
     exact: true,
   },
   {
     path: '/:id/list',
     name: I18n.t('commons.list'),
-    component: withAsyncComponent(() => import('./components/DevicesAssociated')),
+    component: DevicesAssociated,
     exact: true,
   },
   {
     path: '/add',
     name: I18n.t('fleets.add'),
-    component: withAsyncComponent(() => import('./components/FleetsContent')),
+    component: FleetsContent,
     exact: true,
   },
 ]

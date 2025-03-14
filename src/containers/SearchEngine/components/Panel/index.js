@@ -26,6 +26,7 @@
  * ------------------------------------------------------------------------------
  */
 
+/** import dependencies */
 import React, {
   PureComponent,
 } from 'react'
@@ -50,7 +51,6 @@ class Panel extends PureComponent {
       field.fieldId,
       field.fieldName,
     ]))
-
     return fields
   }
 
@@ -60,10 +60,12 @@ class Panel extends PureComponent {
    */
   render() {
     return (
-      <div className="searchList">
-        <PanelFields fields={this.createFields()} />
-        <PanelResult itemResults={this.props.itemResults} />
-      </div>
+      <React.Fragment>
+        <div className="searchList">
+          <PanelFields fields={this.createFields()} />
+          <PanelResult itemResults={this.props.itemResults} />
+        </div>
+      </React.Fragment>
     )
   }
 }

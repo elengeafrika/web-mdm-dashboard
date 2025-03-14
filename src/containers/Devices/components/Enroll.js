@@ -35,7 +35,6 @@ import I18n from 'shared/i18n'
 import itemtype from 'shared/itemtype'
 import ContentPane from 'components/ContentPane'
 import Loading from 'components/Loading'
-import { Select } from 'components/Forms'
 
 /**
  * @class Enroll
@@ -65,7 +64,7 @@ export default class Enroll extends PureComponent {
           await this.props.glpi.addItem({
             itemtype: itemtype.PluginFlyvemdmInvitation,
             input: {
-              users_id: this.state.email.trim(),
+              _useremails: this.state.email.trim(),
             },
           })
         })
@@ -97,12 +96,12 @@ export default class Enroll extends PureComponent {
 
   /**
    * handle change input value
-   * @function changeEmail
+   * @function changeInput
    * @param {object} e
    */
-  changeEmail = (name, value) => {
+  changeInput = (e) => {
     this.setState({
-      email: value,
+      [e.target.name]: e.target.value,
     })
   }
 
@@ -114,38 +113,28 @@ export default class Enroll extends PureComponent {
       )
     } else {
       renderComponent = (
-        <ContentPane style={{ marginLeft: 10 }}>
-          <div className="content-header">
+        <ContentPane>
+          <div className="content-header" style={{ margin: '0 10px' }}>
             <h2 className="content-header__title">
               {I18n.t('devices.enroll.title')}
             </h2>
           </div>
-
           <p>
-            {I18n.t('devices.enroll.select_user')}
+            {I18n.t('devices.enroll.insert_active_email')}
           </p>
-
-          <Select
+          <p>
+            {I18n.t('devices.enroll.email_with_qr')}
+          </p>
+          <input
+            type="email"
+            className="win-textbox"
             placeholder={I18n.t('commons.email')}
             name="email"
             value={this.state.email}
-            function={this.changeEmail}
+            onChange={this.changeInput}
             required
-            request={{
-              params: {
-                itemtype: itemtype.User,
-                options: {
-                  forcedisplay: [1, 2],
-                },
-              },
-              method: 'searchAllItems',
-              content: '1',
-              value: '2',
-            }}
-            glpi={this.props.glpi}
           />
           <br />
-
           <button
             className="btn btn--secondary"
             onClick={() => this.props.history.goBack()}
@@ -153,7 +142,6 @@ export default class Enroll extends PureComponent {
           >
             {I18n.t('commons.cancel')}
           </button>
-
           <button
             className="btn btn--primary"
             style={{ marginLeft: 10 }}

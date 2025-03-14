@@ -313,8 +313,8 @@ class EditMultiple extends PureComponent {
       }
 
       return (
-        <ContentPane style={{ marginLeft: 10 }}>
-          <div className="content-header">
+        <ContentPane>
+          <div className="content-header" style={{ margin: '0 10px' }}>
             <h2 className="content-header__title">
               {I18n.t('edit_multiple.title')}
             </h2>
@@ -340,8 +340,10 @@ class EditMultiple extends PureComponent {
                   <button
                     type="button"
                     className="btn btn--secondary"
-                    style={{ marginRight: 5 }}
                     onClick={this.cancel}
+                    style={{
+                      marginLeft: 10,
+                    }}
                   >
                     {I18n.t('commons.cancel')}
                   </button>
@@ -350,6 +352,9 @@ class EditMultiple extends PureComponent {
                     type="button"
                     className="btn btn--primary"
                     onClick={this.handleSave}
+                    style={{
+                      marginLeft: 10,
+                    }}
                   >
                     {I18n.t('commons.save')}
                   </button>

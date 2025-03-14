@@ -33,6 +33,7 @@ import PropTypes from 'prop-types'
 import {
   NavLink,
 } from 'react-router-dom'
+import { Icon } from 'office-ui-fabric-react'
 
 /**
  * Component with the icons of the side menu
@@ -49,24 +50,24 @@ class IconWithPopper extends PureComponent {
       return (
         <div>
           <NavLink to={this.props.to} activeClassName="selected">
-            <span
-              className={`iconFont ${this.props.iconName}`}
-              title={this.props.title}
-            />
+            <span title={this.props.title}>
+              <Icon iconName={this.props.iconName} />
+            </span>
           </NavLink>
         </div>
       )
     }
     return (
-      <div>
-        <span
-          className={`iconFont ${this.props.iconName}`}
-          title={this.props.title}
-          onClick={this.props.click}
-          style={{ cursor: 'pointer' }}
-          role="link"
-          tabIndex="0"
-        />
+      <div
+        onClick={this.props.click}
+        role="link"
+        tabIndex="0"
+      >
+        <a>
+          <span title={this.props.title}>
+            <Icon iconName={this.props.iconName} />
+          </span>
+        </a>
       </div>
     )
   }

@@ -95,20 +95,7 @@
   "search_engine": {
     "title": "Search Engine",
     "itemType_not_found": "ItemType not found",
-    "item_not_found": "No match found",
-    "contains": "contains",
-    "equals": "equals",
-    "notequals": "notequals",
-    "lessthan": "lessthan",
-    "morethan": "morethan",
-    "under": "under",
-    "notunder": "notunder",
-    "AND": "AND",
-    "OR": "OR",
-    "rule": "Rule",
-    "intersection": "Intersection",
-    "rules": "Rules",
-    "intersection_rules": "Intersection rules"
+    "item_not_found": "No match found"
   },
   "users": {
     "delete": "Delete Users",
@@ -198,7 +185,6 @@
     "edit": "Edit application",
     "new": "New Application",
     "name": "Application name",
-    "alias": "Application alias",
     "not_found": "No Applications yet!"
   },
   "devices": {
@@ -224,7 +210,7 @@
       "request_current_location": "Request current location",
       "no_locations": "No locations available",
       "filter_range": "Filter locations in a range of dates",
-      "remove_filter": "Remove filter"
+      "hide_filter": "Hide filter"
     },
     "applications": {
       "title": "Applications",
@@ -246,7 +232,8 @@
     },
     "enroll": {
       "title": "Enroll new device",
-      "select_user": "Please select a user to send an enrollment invitation."
+      "insert_active_email": "Please insert an active email address.",
+      "email_with_qr": "An email will be sent with a QR code."
     }
   },
   "files": {
@@ -266,8 +253,7 @@
     "not_found": "No Fleets yet!",
     "no_associated_devices": "No associated devices",
     "not_managed": "This fleet doesn't allow policies",
-    "devices_of": "Devices of",
-    "system_privileges": "Requires system privileges"
+    "devices_of": "Devices of"
   },
   "about": {
     "system_information": {
@@ -283,6 +269,7 @@
       "title": "Overview",
       "flyve_mdm_is": "Flyve MDM is a mobile device management software that enables you to secure and manage all the mobile devices of your business via a unique web-based console (MDM).",
       "our_solution": "Our solution allows you to efficiently and easily control any aspects of your Android-based mobile fleet, providing a panel of functionalities:",
+      "source_codes": "Source codes will be released during fall 2016.",
       "provided_as_sass_platform": "Provided as sass platform",
       "google_indepent": "Google independent",
       "deploy_and_configure": "Deploy and configure applications",
@@ -398,7 +385,6 @@
     }
   },
   "commons": {
-    "alias": "Alias",
     "overview": "Overview",
     "system": "System information",
     "help": "Help Center",
@@ -468,7 +454,6 @@
     "offline": "Offline",
     "online": "Online",
     "loading": "Loading",
-    "description": "Description",
     "tasks": "Tasks",
     "files_uploaded_succesfully!": "Files uploaded succesfully!",
     "drop_files": "Drop files here or click to upload",
@@ -482,7 +467,7 @@
     "months": "Months",
     "change": "Change",
     "phone": "Phone",
-    "phone_2": "Phone 2",
+    "phone_2": "Phone ",
     "mobile_phone": "Mobile phone",
     "administrative_number": "Administrative number",
     "authentication": "Authentication",
@@ -553,7 +538,6 @@
     "register": "Register",
     "flyve_mdm_email": "Flyve MDM email",
     "home": "Home",
-    "enroll_status": "Enroll status",
     "device_name": "Device name",
     "fleet_name": "Fleet name",
     "support_name": "Support name",
@@ -570,21 +554,10 @@
     "child_entities": "Child entities",
     "yes": "Yes",
     "no": "No",
-    "recursive": "Recursive",
-    "device_battery": "Device battery",
-    "voltage": "Voltage",
     "null": {
       "default": "Null",
       "min": "null"
     },
-    "network": "Network",
-    "mac": "MAC",
-    "operating-system": "Operating system",
-    "capacity": "Capacity",
-    "mdm_type": "MDM Type",
-    "device_processor": "Device processor",
-    "cpu_frequency": "CPU frequency",
-    "number_cores": "Number of cores",
     "n/a": "n/a",
     "name_not_available": "Name not available",
     "problems_loading_data": "Problems loading data",
@@ -612,7 +585,6 @@
     "chinese": "Chinese",
     "thai": "Thai",
     "Britain": "Britain",
-    "operating_system": "Operating system",
     "Czech_Republic": "Czech Republic",
     "France": "France",
     "Mexico": "Mexico",
@@ -638,23 +610,6 @@
     "creation": "Creation",
     "modification": "Modification",
     "serial": "Serial",
-    "uuid": "UUID",
-    "AND": "AND",
-    "OR": "OR",
-    "active": "Active",
-    "telephone_numbers": "Telephone numbers",
-    "edit_numbers": "Edit numbers",
-    "Storages": "Storages",
-    "architecture": "Architecture",
-    "kernel_version": "Kernel version",
-    "kernel_name": "Kernel name",
-    "notification_type": "Notification type",
-    "speed": "Speed",
-    "mountpoint": "Mountpoint",
-    "totalsize": "Total size",
-    "freesize": "Free size",
-    "build": "Build",
-    "build_on": "Build on",
-    "last_commit": "Last commit"
+    "uuid": "UUID"
   }
 }

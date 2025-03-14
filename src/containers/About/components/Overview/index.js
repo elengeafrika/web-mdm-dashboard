@@ -70,28 +70,9 @@ const Overview = () => (
           {I18n.t('about.overview.simple_web_application')}
         </li>
       </ul>
-      {
-        window.appConfig.release && (
-          <p>
-            {`
-              ${window.appConfig.appName}.
-              ${I18n.t('commons.version')} ${window.appConfig.release.currentVersion}.
-            `}
-            {`${I18n.t('commons.build')} `}
-            <a href={window.appConfig.release.buildUrl}>
-              {`${window.appConfig.release.buildNumber}.`}
-            </a>
-            <br />
-            {`
-              ${I18n.t('commons.build_on')} ${window.appConfig.release.deployDate}.
-              ${I18n.t('commons.last_commit')}
-            `}
-            <a href={`https://github.com/flyve-mdm/web-mdm-dashboard/commit/${window.appConfig.release.lastCommit}`}>
-              {`${(window.appConfig.release.lastCommit).substring(0, 7)}.`}
-            </a>
-          </p>
-        )
-      }
+      <p>
+        {I18n.t('about.overview.source_codes')}
+      </p>
     </div>
   </ContentPane>
 )

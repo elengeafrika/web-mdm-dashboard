@@ -31,6 +31,7 @@ import React, {
   PureComponent,
 } from 'react'
 import PropTypes from 'prop-types'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import validateData from 'shared/validateData'
 import authtype from 'shared/authtype'
@@ -93,7 +94,6 @@ class Profiles extends PureComponent {
 
       this.setState({
         parametersToEvaluate,
-        active: `${validateData(myUser.is_active, '0')}`,
         login: myUser.name,
         firstName: myUser.firstname,
         realName: myUser.realname,
@@ -206,7 +206,6 @@ class Profiles extends PureComponent {
       profiles_id: this.state.defaultProfile.value,
       begin_date: this.state.validSince,
       end_date: this.state.validUntil,
-      is_active: Number(this.state.active),
     }
 
     let correctPassword = true
@@ -410,10 +409,10 @@ class Profiles extends PureComponent {
           </h2>
           <div className="froms Profiles" style={{ marginTop: '20px' }}>
             <div className="froms__row froms__row--icon">
-              <span className="iconFont viewIcon" />
+              <Icon iconName="View" />
             </div>
             <div className="froms__row">
-              <div style={{ overflow: 'hidden', paddingLeft: '20px' }}>
+              <div style={{ overflow: 'hidden' }}>
                 <IconItemList
                   image={this.state.imageProfile}
                   type={this.state.typeImageProfile}
@@ -423,23 +422,23 @@ class Profiles extends PureComponent {
               </div>
             </div>
 
-            <ConstructInputs data={user.personalInformation} icon="contactIcon" />
-            <ConstructInputs data={user.passwordInformation} icon="permissionsIcon" />
-            <ConstructInputs data={user.validDatesInformation} icon="monthIcon" />
-            <ConstructInputs data={user.emailsInformation} icon="emailIcon" />
-
-            <button
-              className="btn btn--secondary"
-              style={{ margin: '20px 0 0 30px' }}
-              onClick={this.addEmail}
-              type="button"
-            >
-              {I18n.t('commons.add_email')}
-            </button>
-
-            <ConstructInputs data={user.contactInformation} icon="phoneIcon" />
-            <ConstructInputs data={user.moreInformation} icon="detailsIcon" />
-            <ConstructInputs data={user.activityInformation} icon="documentIcon" />
+            <ConstructInputs data={user.personalInformation} icon="Contact" />
+            <ConstructInputs data={user.passwordInformation} icon="Permissions" />
+            <ConstructInputs data={user.validDatesInformation} icon="Calendar" />
+            <ConstructInputs data={user.emailsInformation} icon="Mail" />
+            <div style={{ overflow: 'auto' }}>
+              <button
+                className="btn btn--secondary"
+                style={{ float: 'right' }}
+                onClick={this.addEmail}
+                type="button"
+              >
+                {I18n.t('commons.add_email')}
+              </button>
+            </div>
+            <ConstructInputs data={user.contactInformation} icon="Phone" />
+            <ConstructInputs data={user.moreInformation} icon="BulletedList2" />
+            <ConstructInputs data={user.activityInformation} icon="Page" />
             <button
               className="btn btn--primary"
               style={{ margin: '20px', float: 'right' }}

@@ -103,18 +103,6 @@ class Select extends PureComponent {
           })
         }
         break
-
-      case 'searchAllItems':
-        if (response.data) {
-          response.data.forEach((element) => {
-            options.push({
-              content: element[this.props.request.content],
-              value: element[this.props.request.value],
-            })
-          })
-        }
-        break
-
       case 'getAllItems':
         if (response) {
           response.forEach((element) => {
@@ -134,7 +122,6 @@ class Select extends PureComponent {
           })
         })
         break
-
       case 'getMyEntities':
         response.myentities.forEach((element) => {
           options.push({
@@ -143,7 +130,6 @@ class Select extends PureComponent {
           })
         })
         break
-
       default:
         break
     }
@@ -185,29 +171,18 @@ class Select extends PureComponent {
   render() {
     return (
       <div className="froms__col">
-        {
-          this.props.label
-          && (
-            <p>
-              {this.props.label}
-            </p>
-          )
-        }
+        <p>
+          {this.props.label}
+        </p>
         <select
           name={this.props.name}
           value={(this.props.value || undefined)}
           onChange={this.change}
           required={this.props.required}
         >
-          {
-            !this.props.noEmpty
-            && (
-              <option>
-                ---
-              </option>
-            )
-          }
-
+          <option>
+            ---
+          </option>
           {
             this.state.options.map((element, index) => (
               <option value={element.value} key={`${this.props.name}${index.toString()}`}>
@@ -228,7 +203,6 @@ Select.defaultProps = {
   glpi: null,
   request: null,
   value: undefined,
-  noEmpty: false,
 }
 
 Select.propTypes = {
@@ -237,14 +211,12 @@ Select.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
-    PropTypes.bool,
   ]),
   options: PropTypes.array,
   function: PropTypes.func.isRequired,
   glpi: PropTypes.object,
   request: PropTypes.object,
   required: PropTypes.bool,
-  noEmpty: PropTypes.bool,
 }
 
 export default Select

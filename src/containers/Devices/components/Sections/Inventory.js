@@ -33,7 +33,6 @@ import React, {
 import PropTypes from 'prop-types'
 import Loader from 'components/Loader'
 import I18n from 'shared/i18n'
-import itemtype from 'shared/itemtype'
 
 /**
  * @class Inventory
@@ -62,175 +61,18 @@ export default class Inventory extends PureComponent {
       isLoading: true,
     }, async () => {
       try {
-        let object = []
-
-        if (Array.isArray(this.props.itemID)) {
-          const data = []
-
-          for (let i = 0; i < this.props.itemID.length; i += 1) {
-            data.push(
-              // eslint-disable-next-line no-await-in-loop
-              await this.props.glpi.getAnItem({
-                itemtype: this.props.itemType,
-                id: this.props.itemID[i],
-                queryString: this.props.parameters,
-              }),
-            )
-
-            if (this.props.itemType === 'Item_DeviceHardDrive') {
-              data[i] = {
-                ...data[i],
-                // eslint-disable-next-line no-await-in-loop
-                ...await this.props.glpi.getAnItem({
-                  itemtype: 'DeviceHardDrive',
-                  id: data[i].deviceharddrives_id,
-                }),
-              }
-            }
-          }
-          this.data = data
-
-          object = this.data.map(d => Object.keys(this.props.fields)
-            .map(key => ({
-              [this.props.fields[key]]: d[key],
-            })))
-        } else if (this.props.itemType === 'Item_OperatingSystem') {
-          this.data = await this.props.glpi.genericRequest({
-            path: `${itemtype.Item_OperatingSystem}/?searchText[itemtype]=${itemtype.Computer}&searchText[items_id]=${this.props.itemID}`,
-          })
-
-          if (this.data.length > 0) {
-            object = Object.keys(this.props.fields).map(key => ({
-              [this.props.fields[key]]: this.data[0][key],
-            }))
-          }
-        } else if (this.props.itemType === 'computerdisk') {
-          this.data = await this.props.glpi.getSubItems({
-            itemtype: itemtype.Computer,
-            id: this.props.itemID,
-            subItemtype: this.props.itemType,
-          })
-
-          if (Array.isArray(this.data)) {
-            this.data.forEach((data) => {
-              object = [...object, Object.keys(this.props.fields).map(key => ({
-                [this.props.fields[key]]: data[key],
-              }))]
-            })
-          }
-        } else {
-          this.data = await this.props.glpi.getAnItem({
-            itemtype: this.props.itemType,
-            id: this.props.itemID,
-            queryString: this.props.parameters,
-          })
-
-          object = Object.keys(this.props.fields).map(key => ({
-            [this.props.fields[key]]: this.data[key],
-          }))
-        }
-
-        if (this.props.itemType === 'Item_OperatingSystem' && this.data.length > 0) {
-          const operatingSystem = await this.props.glpi.getAnItem({
-            itemtype: 'OperatingSystem',
-            id: this.data[0].operatingsystems_id,
-          })
-
-          const operatingSystemVersion = await this.props.glpi.getAnItem({
-            itemtype: 'OperatingSystemVersion',
-            id: this.data[0].operatingsystemversions_id,
-          })
-
-          const operatingSystemArchitecture = await this.props.glpi.getAnItem({
-            itemtype: 'OperatingSystemArchitecture',
-            id: this.data[0].operatingsystemarchitectures_id,
-          })
-
-          const operatingSystemKernelVersion = await this.props.glpi.getAnItem({
-            itemtype: 'OperatingSystemKernelVersion',
-            id: this.data[0].operatingsystemkernelversions_id,
-          })
-
-          const operatingSystemKernel = await this.props.glpi.getAnItem({
-            itemtype: 'OperatingSystemKernel',
-            id: operatingSystemKernelVersion.operatingsystemkernels_id,
-          })
-
-          object.push({
-            id: operatingSystem.id,
-            name: operatingSystem.name,
-            version: operatingSystemVersion.name,
-            architecture: operatingSystemArchitecture.name,
-            kernel_name: operatingSystemKernel.name,
-            kernel_version: operatingSystemKernelVersion.name,
-          })
-        }
-
-        if (this.props.itemType === 'DeviceProcessor') {
-          const manufacturer = await this.props.glpi.getAnItem({
-            itemtype: 'Manufacturer',
-            id: this.data.manufacturers_id,
-          })
-          object.push({
-            manufacturer: (manufacturer.name || I18n.t('commons.n/a')),
-          })
-        }
-
-        if (this.props.itemType === 'DeviceBattery') {
-          const type = await this.props.glpi.getAnItem({
-            itemtype: 'DeviceBatteryType',
-            id: this.data.devicebatterytypes_id,
-          })
-          object.push({
-            type: (type.name || I18n.t('commons.n/a')),
-          })
-        }
-
-        if (this.props.itemType === 'Computer') {
-          const operatingSystem = await this.props.glpi.searchItems({
-            itemtype: 'Computer',
-            criteria: [{
-              field: 2,
-              link: 'AND',
-              searchtype: 'contains',
-              value: this.props.itemID,
-            }],
-            metacriteria: [{
-              field: 'common',
-              itemtype: 'OperatingSystem',
-              link: 'AND',
-              searchtype: 'contains',
-              value: '',
-            }],
-          })
-
-          object.push({
-            'operating-system': (operatingSystem.data[0][45] || I18n.t('commons.n/a')),
-          })
-        }
-
+        const data = await this.props.glpi.getAnItem({
+          itemtype: this.props.itemType,
+          id: this.props.itemID,
+          queryString: this.props.parameters,
+        })
+        const object = Object.keys(this.props.fields).map(key => ({
+          [this.props.fields[key]]: data[key],
+        }))
         this.setState({
           isLoading: false,
           data: object,
         })
-
-        if (this.props.itemType === 'PluginFlyvemdmAgent') {
-          this.props.afterLoading(
-            this.data.plugin_flyvemdm_fleets_id,
-            this.data.computers_id,
-          )
-        }
-
-        if (this.props.itemType === 'Computer') {
-          const { _devices, _networkports } = this.data
-
-          this.props.afterLoading(
-            _devices.Item_DeviceProcessor[Object.keys(_devices.Item_DeviceProcessor)[0]].deviceprocessors_id,
-            _devices.Item_DeviceBattery[Object.keys(_devices.Item_DeviceBattery)[0]].devicebatteries_id,
-            _networkports.NetworkPortEthernet[0].netport_id,
-            Object.keys(_devices.Item_DeviceHardDrive),
-          )
-        }
       } catch (error) {
         this.setState({
           isLoading: false,
@@ -248,39 +90,16 @@ export default class Inventory extends PureComponent {
   buildList = value => Object.keys(value).map(index => (
     <div
       className="list-content"
-      key={`buildList-${this.props.title}-${value[index]}-${index.toString()}`}
+      key={`buildList-${index.toString()}`}
     >
       <div className="list-col">
-        {I18n.t(`commons.${index.toString()}`)}
+        {I18n.t(`commons.${index.toString().toLocaleLowerCase()}`)}
       </div>
       <div className="list-col">
         {value[index]}
       </div>
     </div>
   ))
-
-  /**
-   * handle build inventory list
-   * @function buildList
-   * @param {object} elements
-   */
-  buildSpecialList = (elements) => {
-    const specialList = Object.keys(elements).map((element, index) => (
-      <div
-        className="list-content"
-        key={`buildSpecialList-${this.props.title}-${element}-${index.toString()}`}
-      >
-        <div className="list-col">
-          {I18n.t(`commons.${element}`)}
-        </div>
-        <div className="list-col">
-          {elements[element]}
-        </div>
-      </div>
-    ))
-
-    return specialList
-  }
 
   render() {
     if (this.state.isLoading) {
@@ -296,34 +115,7 @@ export default class Inventory extends PureComponent {
             {this.props.title}
           </div>
           {
-            this.state.data.map((value, index) => {
-              if (Array.isArray(value)) {
-                return (
-                  <React.Fragment key={`zebra-list-${index.toString()}`}>
-                    {
-                      index !== 0 && (
-                        <React.Fragment>
-                          {/* Used to make the colors of the zebra list look good  */}
-                          <div />
-                          <hr />
-                        </React.Fragment>
-                      )
-                    }
-                    {
-                      value.map(x => (
-                        this.buildList(x)
-                      ))
-                    }
-                  </React.Fragment>
-                )
-              }
-              return this.buildList(value)
-            })
-          }
-          {
-            this.props.specialFields && (
-              this.buildSpecialList(this.props.specialFields)
-            )
+            this.state.data.map(value => (this.buildList(value)))
           }
         </div>
       )
@@ -331,26 +123,16 @@ export default class Inventory extends PureComponent {
     return (null)
   }
 }
-
 /** Inventory defaultProps */
 Inventory.defaultProps = {
   parameters: {},
-  afterLoading: () => {},
-  specialFields: null,
 }
-
 /** Inventory propTypes */
 Inventory.propTypes = {
   title: PropTypes.string.isRequired,
   itemType: PropTypes.string.isRequired,
-  itemID: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-    PropTypes.array,
-  ]).isRequired,
+  itemID: PropTypes.number.isRequired,
   fields: PropTypes.object.isRequired,
   parameters: PropTypes.object,
   glpi: PropTypes.object.isRequired,
-  afterLoading: PropTypes.func,
-  specialFields: PropTypes.object,
 }

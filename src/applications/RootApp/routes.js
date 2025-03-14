@@ -28,7 +28,12 @@
 
 /** import dependencies */
 import publicURL from 'shared/publicURL'
-import withAsyncComponent from 'hoc/withAsyncComponent'
+import SignIn from 'containers/SignIn'
+import asyncSignUp from 'async/asyncSignUp'
+import asyncAdminDashboard from 'async/asyncAdminDashboard'
+import asyncValidateAccount from 'async/asyncValidateAccount'
+import asyncForgotPassword from 'async/asyncForgotPassword'
+import asyncResetPassword from 'async/asyncResetPassword'
 
 /**
  * Represents all public routes
@@ -37,25 +42,37 @@ import withAsyncComponent from 'hoc/withAsyncComponent'
  */
 const routes = [{
   path: `${publicURL}/`,
-  component: withAsyncComponent(() => import('containers/SignIn')),
+  component: SignIn,
   exact: true,
   private: false,
 },
 {
+  path: `${publicURL}/signUp`,
+  component: asyncSignUp,
+  exact: false,
+  private: false,
+},
+{
+  path: `${publicURL}/validateAccount`,
+  component: asyncValidateAccount,
+  exact: false,
+  private: false,
+},
+{
   path: `${publicURL}/forgotPassword`,
-  component: withAsyncComponent(() => import('containers/ForgotPassword')),
+  component: asyncForgotPassword,
   exact: false,
   private: false,
 },
 {
   path: `${publicURL}/resetPassword`,
-  component: withAsyncComponent(() => import('containers/ResetPassword')),
+  component: asyncResetPassword,
   exact: false,
   private: false,
 },
 {
   path: `${publicURL}/app`,
-  component: withAsyncComponent(() => import('applications/AdminDashboard')),
+  component: asyncAdminDashboard,
   exact: false,
   private: false,
 },

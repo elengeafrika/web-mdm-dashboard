@@ -51,8 +51,7 @@ export default class ApplicationsAdd extends PureComponent {
     this.state = {
       files: [],
       isLoading: false,
-      name: '',
-      alias: '',
+      input: '',
     }
   }
 
@@ -87,7 +86,7 @@ export default class ApplicationsAdd extends PureComponent {
    */
   changeInput = (e) => {
     this.setState({
-      [e.target.name]: e.target.value,
+      input: e.target.value,
     })
   }
 
@@ -109,21 +108,6 @@ export default class ApplicationsAdd extends PureComponent {
   }
 
   /**
-   * returns the value of the field in case the field is not empty,
-   * otherwise returns the name of the file
-   * @param {string} input Name of the field to be evaluated
-   * @param {string} key File key
-   * @function validateInput
-   */
-  validateInput = (input, key) => {
-    if (this.state[input] === '') {
-      return this.state.files[key].name
-    }
-
-    return this.state[input]
-  }
-
-  /**
    * Handle upload files
    * @function filesUpload
    */
@@ -133,7 +117,7 @@ export default class ApplicationsAdd extends PureComponent {
       try {
         const file = this.state.files[key]
         formData.append('file', file)
-        formData.append('uploadManifest', `{"input":{"name":"${this.validateInput('name', key)}","alias":"${this.validateInput('alias', key)}"}}`)
+        formData.append('uploadManifest', `{"input":{"name":"${this.state.file.name}","alias":"${this.state.input}"}}`)
         this.setState({
           isLoading: true,
         })
@@ -177,32 +161,15 @@ export default class ApplicationsAdd extends PureComponent {
                 {I18n.t('applications.new')}
               </h2>
             </div>
-
             <div style={{ padding: '10px' }}>
-              <p>
-                {I18n.t('commons.name')}
-              </p>
               <input
                 type="text"
                 className="win-textbox"
                 placeholder={I18n.t('applications.name')}
-                name="name"
-                value={this.state.name}
+                name="input"
+                value={this.state.input}
                 onChange={this.changeInput}
               />
-
-              <p>
-                {I18n.t('commons.alias')}
-              </p>
-              <input
-                type="text"
-                className="win-textbox"
-                placeholder={I18n.t('applications.alias')}
-                name="alias"
-                value={this.state.alias}
-                onChange={this.changeInput}
-              />
-
               <FilesUpload
                 ref={(filesUpload) => { this.files = filesUpload }}
                 className="files-dropzone"
@@ -215,7 +182,6 @@ export default class ApplicationsAdd extends PureComponent {
               >
                 {I18n.t('commons.drop_file')}
               </FilesUpload>
-
               <div style={{ marginTop: 10 }}>
                 <button
                   className="btn btn--primary"
@@ -224,7 +190,6 @@ export default class ApplicationsAdd extends PureComponent {
                 >
                   {I18n.t('commons.save')}
                 </button>
-
                 {
                   this.state.files.length > 0
                     ? (

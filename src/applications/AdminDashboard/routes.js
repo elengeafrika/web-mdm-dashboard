@@ -27,8 +27,18 @@
  */
 
 /** import dependencies */
-import withAsyncComponent from 'hoc/withAsyncComponent'
+import Dashboard from 'containers/HomeDashboard'
+import Devices from 'containers/Devices'
+import Invitations from 'containers/Invitations'
+import Files from 'containers/Files'
+import Applications from 'containers/Applications'
+import Users from 'containers/Users'
+import SearchEngine from 'containers/SearchEngine'
+import About from 'containers/About'
+import Settings from 'containers/Settings'
+import Fleets from 'containers/Fleets'
 import I18n from 'shared/i18n'
+import ErrorPage from 'components/ErrorPage'
 
 /**
  * Represents all private routes
@@ -38,67 +48,67 @@ import I18n from 'shared/i18n'
 const routes = [{
   path: '/',
   name: I18n.t('commons.home'),
-  component: withAsyncComponent(() => import('containers/HomeDashboard')),
+  component: Dashboard,
   exact: true,
 },
 {
   path: '/error',
   name: I18n.t('commons.error'),
-  component: withAsyncComponent(() => import('components/ErrorPage')),
+  component: ErrorPage,
   exact: true,
 },
 {
   path: '/devices',
   name: I18n.t('commons.devices'),
-  component: withAsyncComponent(() => import('containers/Devices')),
+  component: Devices,
   exact: false,
 },
 {
   path: '/invitations',
   name: I18n.t('commons.invitations'),
-  component: withAsyncComponent(() => import('containers/Invitations')),
+  component: Invitations,
   exact: false,
 },
 {
   path: '/files',
   name: I18n.t('commons.files'),
-  component: withAsyncComponent(() => import('containers/Files')),
+  component: Files,
   exact: false,
 },
 {
   path: '/fleets',
   name: I18n.t('commons.fleets'),
-  component: withAsyncComponent(() => import('containers/Fleets')),
+  component: Fleets,
   exact: false,
 },
 {
   path: '/applications',
   name: I18n.t('commons.applications'),
-  component: withAsyncComponent(() => import('containers/Applications')),
+  component: Applications,
   exact: false,
 },
 {
   path: '/users',
   name: I18n.t('commons.users'),
-  component: withAsyncComponent(() => import('containers/Users')),
+  component: Users,
   exact: false,
 },
 {
   path: '/search',
   name: I18n.t('commons.search'),
-  component: withAsyncComponent(() => import('containers/SearchEngine')),
+  component: SearchEngine,
   exact: false,
 },
 {
   path: '/about',
   name: I18n.t('commons.about'),
-  component: withAsyncComponent(() => import('containers/About')),
+  component: About,
   exact: false,
 },
 {
   path: '/settings',
   name: I18n.t('commons.settings'),
-  component: withAsyncComponent(() => import('containers/Settings')),
+  component: Settings,
   exact: false,
 },
 ]

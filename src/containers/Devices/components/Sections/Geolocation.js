@@ -57,8 +57,6 @@ export default class Geolocation extends PureComponent {
       selectedLocation: undefined,
       filter: false,
     }
-
-    this.allLocations = []
   }
 
   componentDidMount() {
@@ -93,17 +91,9 @@ export default class Geolocation extends PureComponent {
    * @param {date}
    */
   applyRange = (min, max) => {
-    if (!min || !max) {
-      this.setState({
-        locations: this.allLocations,
-      })
-    } else {
-      const locations = this.allLocations.filter(location => validateDate(new Date(location.date), min, max))
-      this.setState({
-        locations,
-        showLocations: locations,
-      })
-    }
+    this.setState(prevState => ({
+      showLocations: prevState.locations.filter(location => validateDate(new Date(location.date), min, max)),
+    }))
   }
 
   /**
@@ -135,7 +125,6 @@ export default class Geolocation extends PureComponent {
       this.setState({
         isLoadingGeolocation: true,
       })
-
       await this.props.glpi.updateItem({
         id: this.state.id,
         itemtype: itemtype.PluginFlyvemdmAgent,
@@ -143,26 +132,21 @@ export default class Geolocation extends PureComponent {
           _geolocate: '',
         },
       })
-
       this.props.toast.setNotification({
         title: I18n.t('commons.success'),
         body: I18n.t('notifications.request_sent'),
         type: 'success',
       })
-
       this.handleRefresh()
     } catch (error) {
       this.setState({
         isLoadingGeolocation: false,
       })
-
-      this.props.toast.setNotification(
-        this.props.handleMessage({
-          type: 'alert',
-          message: error,
-          displayErrorPage: false,
-        }),
-      )
+      this.props.toast.setNotification(this.props.handleMessage({
+        type: 'alert',
+        message: error,
+        displayErrorPage: false,
+      }))
     }
   }
 
@@ -180,15 +164,11 @@ export default class Geolocation extends PureComponent {
           id: this.state.id,
           itemtype: itemtype.PluginFlyvemdmAgent,
         })
-
         const response = await this.props.glpi.getSubItems({
           itemtype: itemtype.Computer,
           id: computersID,
           subItemtype: itemtype.PluginFlyvemdmGeolocation,
         })
-
-        this.allLocations = response
-
         this.setState({
           locations: response,
           showLocations: [],
@@ -196,13 +176,10 @@ export default class Geolocation extends PureComponent {
           isLoadingGeolocation: false,
         })
       } catch (error) {
-        this.props.toast.setNotification(
-          this.props.handleMessage({
-            type: 'alert',
-            message: error,
-          }),
-        )
-
+        this.props.toast.setNotification(this.props.handleMessage({
+          type: 'alert',
+          message: error,
+        }))
         this.setState({
           locations: [],
           showLocations: [],
@@ -211,17 +188,6 @@ export default class Geolocation extends PureComponent {
         })
       }
     }
-  }
-
-  showFilter = () => {
-    this.setState(prevState => ({
-      filter: !prevState.filter,
-    }), () => {
-      if (!this.state.filter) {
-        // Remove the filter in the locations shown to the user
-        this.applyRange(null)
-      }
-    })
   }
 
   /**
@@ -237,28 +203,30 @@ export default class Geolocation extends PureComponent {
     return this.state.isLoading
       ? <Loading message={`${I18n.t('commons.loading')}...`} />
       : (
-        <div className="geolocation">
+        <React.Fragment>
           <Map
             markers={this.state.showLocations}
-            style={{ height: '300px', maxWidth: '800px' }}
+            style={{ margin: '0 5px', height: '300px', maxWidth: '800px' }}
             selectedLocation={this.state.selectedLocation}
           />
-
           <button
             className="btn btn--secondary"
-            onClick={this.showFilter}
+            style={{ margin: 5 }}
+            onClick={() => this.setState(prevState => ({
+              filter: !prevState.filter,
+            }))}
             type="button"
           >
             {
               this.state.filter
-                ? I18n.t('devices.geolocation.remove_filter')
+                ? I18n.t('devices.geolocation.hide_filter')
                 : I18n.t('devices.geolocation.filter_range')
             }
           </button>
-
           <div style={{ display: 'inline-block' }}>
             <button
               className="btn btn--secondary"
+              style={{ margin: 5 }}
               onClick={this.requestLocation}
               type="button"
             >
@@ -283,7 +251,7 @@ export default class Geolocation extends PureComponent {
             goToLocation={this.goToLocation}
             markers={this.state.showLocations}
           />
-        </div>
+        </React.Fragment>
       )
   }
 }

@@ -27,8 +27,11 @@
  */
 
 /** import dependencies */
-import withAsyncComponent from 'hoc/withAsyncComponent'
 import I18n from 'shared/i18n'
+import EmptyMessage from 'components/EmptyMessage'
+import ErrorPage from 'components/ErrorPage'
+import Enroll from '../Devices/components/Enroll'
+import InvitationsPendingPage from './components/InvitationsPendingPage'
 
 /**
  * Represents all private routes from Invitations
@@ -38,25 +41,25 @@ import I18n from 'shared/i18n'
 const routes = [{
   path: '/',
   name: I18n.t('commons.no_selection'),
-  component: withAsyncComponent(() => import('components/EmptyMessage')),
+  component: EmptyMessage,
   exact: true,
 },
 {
   path: '/error',
   name: I18n.t('commons.error'),
-  component: withAsyncComponent(() => import('components/ErrorPage')),
+  component: ErrorPage,
   exact: true,
 },
 {
   path: '/add',
   name: I18n.t('commons.add'),
-  component: withAsyncComponent(() => import('../Devices/components/Enroll')),
+  component: Enroll,
   exact: true,
 },
 {
   path: '/:id',
   name: I18n.t('commons.selected'),
-  component: withAsyncComponent(() => import('./components/InvitationsPendingPage')),
+  component: InvitationsPendingPage,
   exact: true,
 },
 ]

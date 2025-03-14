@@ -33,6 +33,7 @@ import React, {
 import PropTypes from 'prop-types'
 import ReactWinJS from 'react-winjs'
 import WinJS from 'winjs'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import itemtype from 'shared/itemtype'
 import publicURL from 'shared/publicURL'
@@ -51,7 +52,7 @@ class HelpCenterList extends PureComponent {
       role="link"
       tabIndex="0"
     >
-      <span className="iconFont documentIcon" style={{ marginRight: '5px' }} />
+      <Icon iconName="Page" style={{ marginRight: '5px' }} />
       {item.data.name}
     </div>
   ))
@@ -87,11 +88,11 @@ class HelpCenterList extends PureComponent {
         isLoading: false,
       })
     } catch (error) {
-      this.props.toast.setNotification(this.props.handleMessage({
+      this.props.handleMessage({
         type: 'alert',
         message: error,
-        displayErrorPage: false,
-      }))
+        customErrorRoute: '/app/about/help/error',
+      })
       this.setState({
         isLoading: false,
       })
@@ -195,7 +196,7 @@ class HelpCenterList extends PureComponent {
                       role="button"
                       tabIndex="0"
                     >
-                      <span className="iconFont searchIcon" />
+                      <Icon iconName="Search" />
                     </div>
                   </div>
                 </div>
@@ -218,13 +219,13 @@ class HelpCenterList extends PureComponent {
                     <div className="separator" />
 
                     <div>
-                      <button
-                        className="btn btn-link"
+                      <a
                         onClick={this.showAllArticles}
-                        type="button"
+                        role="link"
+                        tabIndex="0"
                       >
                         { I18n.t('about.help_center.browse_all_articles') }
-                      </button>
+                      </a>
                     </div>
                   </div>
                 )
@@ -238,7 +239,7 @@ class HelpCenterList extends PureComponent {
                 role="link"
                 tabIndex="0"
               >
-                <span className="iconFont messageIcon" style={{ marginRight: '5px' }} />
+                <Icon iconName="Chat" style={{ marginRight: '5px' }} />
                 { I18n.t('about.help_center.send_feedback') }
               </div>
             </div>
@@ -250,7 +251,6 @@ class HelpCenterList extends PureComponent {
 
 /** HelpCenterList propTypes */
 HelpCenterList.propTypes = {
-  toast: PropTypes.object.isRequired,
   handleMessage: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   glpi: PropTypes.object.isRequired,

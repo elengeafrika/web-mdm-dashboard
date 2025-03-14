@@ -33,6 +33,7 @@ import React, {
 import PropTypes from 'prop-types'
 import ReactWinJS from 'react-winjs'
 import WinJS from 'winjs'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import BuildItemList from 'shared/BuildItemList'
 import itemtype from 'shared/itemtype'
@@ -83,6 +84,8 @@ export default class DevicesList extends PureComponent {
         page: 1,
         count: 15,
       },
+      hideContentDialog: true,
+
     }
   }
 
@@ -257,12 +260,19 @@ export default class DevicesList extends PureComponent {
   }
 
   /**
-   * handle delete to selected device
-   * @function handleDelete
+   * Show the content dialog
+   * @function showContentDialog
    */
-  handleDelete = async () => {
+  showContentDialog = () => this.setState({ hideContentDialog: false })
+
+  /**
+   * handle delete selected devices
+   * @function handleSelectionChanged
+   * @param {object} eventObject
+   * @async
+   */
+  handleDelete = async (isOK) => {
     try {
-      const isOK = await Confirmation.isOK(this.contentDialog)
       if (isOK) {
         const itemListToDelete = this.props.selectedItems.map(item => ({
           id: item['PluginFlyvemdmAgent.id'],
@@ -282,7 +292,7 @@ export default class DevicesList extends PureComponent {
 
         this.props.toast.setNotification({
           title: I18n.t('commons.success'),
-          body: I18n.t('notifications.device_successfully_removed'),
+          body: I18n.t('notifications.file_successfully_removed'),
           type: 'success',
         })
         this.props.changeSelectionMode(false)
@@ -312,8 +322,8 @@ export default class DevicesList extends PureComponent {
   }
 
   /**
-   * handle list sort
    * @async
+   * handle list sort
    * @function handleSort
    * @param {object} eventObject
    */
@@ -368,7 +378,7 @@ export default class DevicesList extends PureComponent {
         label={I18n.t('commons.delete')}
         priority={0}
         disabled={this.props.selectedItems.length === 0}
-        onClick={this.handleDelete}
+        onClick={this.showContentDialog}
       />
     )
 
@@ -392,8 +402,8 @@ export default class DevicesList extends PureComponent {
           role="button"
           tabIndex="0"
         >
-          <span
-            className="iconFont refreshIcon"
+          <Icon
+            iconName="Refresh"
             style={{ padding: '10px', fontSize: '20px' }}
           />
           <span>
@@ -468,9 +478,19 @@ export default class DevicesList extends PureComponent {
         </ReactWinJS.ToolBar>
         {listComponent}
         <Confirmation
+          hideDialog={this.state.hideContentDialog}
           title={I18n.t('devices.delete')}
           message={`${this.props.selectedItems.length} ${I18n.t('devices.title')}`}
-          reference={(el) => { this.contentDialog = el }}
+          isOK={() => {
+            this.setState({ hideContentDialog: true }, () => {
+              this.handleDelete(true)
+            })
+          }}
+          cancel={() => {
+            this.setState({ hideContentDialog: true }, () => {
+              this.handleDelete(false)
+            })
+          }}
         />
       </React.Fragment>
     )

@@ -1,0 +1,65 @@
+// Theme Colors
+
+$color-1-primary:  #158784;
+$color-2-primary:  #f2f2f2;
+
+$color-1-secondary:  #cccccc;
+$color-2-secondary:  #507675;
+
+$font-color-primary: black;
+
+$white-color: #FFFFFF;
+
+// Color of signal
+
+$alert: #dd0000;
+$warning: #ffa600;
+$success: #158784;
+$info: #00BCD4;
+
+//Color empty message
+
+$empty-message-color:#424242;
+
+// Colors to delete
+
+$text-detail-color: grey;
+$border-ligth-color: lighten($color-2-primary, 5);
+$app-color: $color-1-primary;
+
+// Colors Split View
+
+$splitview-color-fonts: $font-color-primary;
+$splitview-color-fonts-hover: $font-color-primary;
+
+// Colors dropdown
+
+$dropdown-color: #FFFFFF;
+$dropdown-color-hover: rgba(0,0,0,.1);
+
+// Fabric palette
+
+$themePrimaryColor: #158784;
+$themeLighterAltColor: #f2fafa;
+$themeLighterColor: #cceceb;
+$themeLightColor: #a4dbd9;
+$themeTertiaryColor: #5bb7b4;
+$themeSecondaryColor: #279692;
+$themeDarkAltColor: #137a76;
+$themeDarkColor: #106764;
+$themeDarkerColor: #0c4c4a;
+$neutralLighterAltColor: #f3f3f3;
+$neutralLighterColor: #efefef;
+$neutralLightColor: #e5e5e5;
+$neutralQuaternaryAltColor: #d6d6d6;
+$neutralQuaternaryColor: #cccccc;
+$neutralTertiaryAltColor: #c4c4c4;
+$neutralTertiaryColor: #c2c2c2;
+$neutralSecondaryColor: #858585;
+$neutralPrimaryAltColor: #4b4b4b;
+$neutralPrimaryColor: #333;
+$neutralDarkColor: #272727;
+$blackColor: #1d1d1d;
+$whiteColor: #fafafa;
+$bodyBackgroundColor: #fafafa;
+$bodyTextColor: #333;

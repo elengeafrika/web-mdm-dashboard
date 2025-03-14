@@ -33,6 +33,7 @@ import PropTypes from 'prop-types'
 import {
   Link,
 } from 'react-router-dom'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import publicURL from 'shared/publicURL'
 
@@ -81,11 +82,9 @@ class HeaderBreadcrumb extends PureComponent {
       <header className="header-block">
 
         <div className="header-icon">
-          <span
-            className="iconFont burgerIcon"
+          <Icon
+            iconName="GlobalNavButton"
             onClick={this.props.handleToggleExpand}
-            role="button"
-            tabIndex="0"
           />
         </div>
 

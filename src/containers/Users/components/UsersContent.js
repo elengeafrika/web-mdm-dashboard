@@ -31,6 +31,7 @@ import React, {
   PureComponent,
 } from 'react'
 import PropTypes from 'prop-types'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import itemtype from 'shared/itemtype'
 import getID from 'shared/getID'
@@ -98,38 +99,41 @@ class UsersContent extends PureComponent {
   }
 
   /**
+   * Show the content dialog
+   * @function showContentDialog
+   */
+  showContentDialog = () => this.setState({ hideContentDialog: false })
+
+  /**
    * Delete user
    * @function handleDelete
    * @async
    */
   handleDelete = async () => {
-    const isOK = await Confirmation.isOK(this.contentDialog)
-    if (isOK) {
-      const itemListToDelete = [{ id: this.state.id }]
+    const itemListToDelete = [{ id: this.state.id }]
 
-      this.setState({
-        isLoading: true,
+    this.setState({
+      isLoading: true,
+    })
+
+    try {
+      await this.props.glpi.deleteItem({
+        itemtype: itemtype.User,
+        input: itemListToDelete,
       })
-
-      try {
-        await this.props.glpi.deleteItem({
-          itemtype: itemtype.User,
-          input: itemListToDelete,
-        })
-        this.props.toast.setNotification({
-          title: I18n.t('commons.success'),
-          body: I18n.t('notifications.elements_successfully_removed'),
-          type: 'success',
-        })
-        this.props.changeAction('reload')
-        this.props.changeSelectionMode(false)
-        this.props.history.push(`${publicURL}/app/users`)
-      } catch (error) {
-        this.props.toast.setNotification(this.props.handleMessage({
-          type: 'alert',
-          message: error,
-        }))
-      }
+      this.props.toast.setNotification({
+        title: I18n.t('commons.success'),
+        body: I18n.t('notifications.elements_successfully_removed'),
+        type: 'success',
+      })
+      this.props.changeAction('reload')
+      this.props.changeSelectionMode(false)
+      this.props.history.push(`${publicURL}/app/users`)
+    } catch (error) {
+      this.props.toast.setNotification(this.props.handleMessage({
+        type: 'alert',
+        message: error,
+      }))
     }
   }
 
@@ -201,20 +205,16 @@ class UsersContent extends PureComponent {
 
                 <br />
 
-                <span
-                  className="iconFont editIcon"
+                <Icon
+                  iconName="Edit"
                   style={{ padding: '0 10px', fontSize: '20px' }}
                   onClick={() => this.props.history.push(`${publicURL}/app/users/${this.state.id}/edit`)}
-                  role="button"
-                  tabIndex="0"
                 />
 
-                <span
-                  className="iconFont deleteIcon"
+                <Icon
+                  iconName="Delete"
                   style={{ padding: '0 10px', fontSize: '20px' }}
-                  onClick={this.handleDelete}
-                  role="button"
-                  tabIndex="0"
+                  onClick={this.showContentDialog}
                 />
 
               </div>
@@ -224,7 +224,7 @@ class UsersContent extends PureComponent {
           <div className="content-info">
             <ul>
               <li>
-                <span className="iconFont phoneIcon" />
+                <Icon iconName="Phone" />
                 <div>
                   <a href={this.state.data.mobile ? `tel: ${this.state.data.mobile}` : '#call'}>
                     {I18n.t('commons.call_mobile')}
@@ -235,7 +235,7 @@ class UsersContent extends PureComponent {
                 </div>
               </li>
               <li>
-                <span className="iconFont phoneIcon" />
+                <Icon iconName="Phone" />
                 <div>
                   <a href={this.state.data.phone2 ? `tel: ${this.state.data.phone2}` : '#call'}>
                     {I18n.t('commons.call_work')}
@@ -246,7 +246,7 @@ class UsersContent extends PureComponent {
                 </div>
               </li>
               <li>
-                <span className="iconFont emailIcon" />
+                <Icon iconName="Mail" />
                 <div>
                   <a href={this.state.emails.length > 0 ? `mailto: ${this.state.emails[0].email}` : '#email'}>
                     {I18n.t('commons.email')}
@@ -258,7 +258,17 @@ class UsersContent extends PureComponent {
               </li>
             </ul>
           </div>
-          <Confirmation title={I18n.t('users.delete_one')} message={this.state.data.name} reference={(el) => { this.contentDialog = el }} />
+          <Confirmation
+            hideDialog={this.state.hideContentDialog}
+            title={I18n.t('users.delete_one')}
+            message={this.state.data.name}
+            isOK={() => {
+              this.setState({ hideContentDialog: true }, () => {
+                this.handleDelete()
+              })
+            }}
+            cancel={() => this.setState({ hideContentDialog: true })}
+          />
         </React.Fragment>
       )
     }

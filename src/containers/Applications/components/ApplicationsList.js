@@ -33,6 +33,7 @@ import React, {
 import PropTypes from 'prop-types'
 import ReactWinJS from 'react-winjs'
 import WinJS from 'winjs'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import itemtype from 'shared/itemtype'
 import publicURL from 'shared/publicURL'
@@ -72,6 +73,7 @@ export default class ApplicationsList extends PureComponent {
         page: 1,
         count: 15,
       },
+      hideDialog: true,
     }
   }
 
@@ -228,31 +230,46 @@ export default class ApplicationsList extends PureComponent {
    * @param {object} eventObject
    */
   handleSelectionChanged = (eventObject) => {
+    const {
+      changeSelectedItems,
+      selectionMode,
+      history,
+    } = this.props
+    const { itemList } = this.state
+
     const listView = eventObject.currentTarget.winControl
     const index = listView.selection.getIndices()
     const itemSelected = []
 
     for (const item of index) {
-      itemSelected.push(this.state.itemList.getItem(item).data)
+      itemSelected.push(itemList.getItem(item).data)
     }
 
-    this.props.changeSelectedItems(itemSelected)
-    if (index.length === 1 && !this.props.selectionMode) {
-      this.props.history.push(`${publicURL}/app/applications/${itemSelected[0]['PluginFlyvemdmPackage.id']}`)
+    changeSelectedItems(itemSelected)
+
+    if (index.length === 1 && !selectionMode) {
+      history.push(`${publicURL}/app/applications/${itemSelected[0]['PluginFlyvemdmPackage.id']}`)
     }
-    if (index.length > 1 && !this.props.selectionMode) {
-      this.props.history.push(`${publicURL}/app/applications/edit/`)
+
+    if (index.length > 1 && !selectionMode) {
+      history.push(`${publicURL}/app/applications/edit/`)
     }
   }
+
+  /**
+   * Show the content dialog
+   * @function showContentDialog
+   */
+  showContentDialog = () => this.setState({ hideContentDialog: false })
 
   /**
    * handle delete selected application
    * @function handleSelectionChanged
    * @param {object} eventObject
+   * @async
    */
-  handleDelete = async () => {
+  handleDelete = async (isOK) => {
     try {
-      const isOK = await Confirmation.isOK(this.contentDialog)
       if (isOK) {
         const itemListToDelete = this.props.selectedItems.map(item => ({
           id: item['PluginFlyvemdmPackage.id'],
@@ -438,7 +455,7 @@ export default class ApplicationsList extends PureComponent {
         label={I18n.t('commons.delete')}
         priority={0}
         disabled={this.props.selectedItems.length === 0}
-        onClick={this.handleDelete}
+        onClick={this.showContentDialog}
       />
     )
 
@@ -462,8 +479,8 @@ export default class ApplicationsList extends PureComponent {
           role="button"
           tabIndex="0"
         >
-          <span
-            className="iconFont refreshIcon"
+          <Icon
+            iconName="Refresh"
             style={{ padding: '10px', fontSize: '20px' }}
           />
           <span>
@@ -545,9 +562,19 @@ export default class ApplicationsList extends PureComponent {
 
         {listComponent}
         <Confirmation
+          hideDialog={this.state.hideContentDialog}
           title={I18n.t('applications.delete')}
           message={`${this.props.selectedItems.length} ${I18n.t('applications.title')}`}
-          reference={(el) => { this.contentDialog = el }}
+          isOK={() => {
+            this.setState({ hideContentDialog: true }, () => {
+              this.handleDelete(true)
+            })
+          }}
+          cancel={() => {
+            this.setState({ hideContentDialog: true }, () => {
+              this.handleDelete(false)
+            })
+          }}
         />
       </React.Fragment>
     )

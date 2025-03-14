@@ -31,6 +31,7 @@ import React, {
   PureComponent,
 } from 'react'
 import PropTypes from 'prop-types'
+import { Icon } from 'office-ui-fabric-react'
 
 /**
  * @class TasksRemoveFileList
@@ -60,12 +61,10 @@ class TasksRemoveFileList extends PureComponent {
             </div>
             <div className="files-list__item-content-secondary">
               <div className="files-list__item-icon">
-                <span
-                  className="iconFont deleteIcon"
+                <Icon
+                  iconName="Delete"
                   style={{ fontSize: '18px' }}
                   onClick={() => this.handleRemove(item)}
-                  role="button"
-                  tabIndex="0"
                 />
               </div>
             </div>

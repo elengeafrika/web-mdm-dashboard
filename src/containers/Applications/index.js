@@ -48,7 +48,7 @@ class Applications extends PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      icon: 'switchAppsIcon',
+      icon: 'AppIconDefault',
       mode: getMode(),
       itemListPaneWidth: getMode() === 'small' ? '100%' : 320,
       selectionMode: false,
@@ -65,6 +65,25 @@ class Applications extends PureComponent {
    */
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleResize)
+  }
+
+  /**
+   * Make sure that the state and props are in sync for when it is required
+   * @static
+   * @function getDerivedStateFromProps
+   * @param {object} nextProps
+   * @param {object} prevState
+   */
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.history.location.pathname === `${publicURL}/app/applications` && prevState.selectedItems.length > 0 && prevState.selectionMode === false) {
+      return {
+        ...prevState,
+        selectedItems: [],
+      }
+    }
+    return {
+      ...prevState,
+    }
   }
 
   /**

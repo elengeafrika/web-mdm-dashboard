@@ -197,7 +197,7 @@ export default class DevicesEditOne extends PureComponent {
 
     if (agent && !this.state.isLoading) {
       return (
-        <ContentPane style={{ marginLeft: 10 }}>
+        <ContentPane>
           <div className="content-header" style={{ display: 'inline-flex' }}>
             <button
               className="btn btn--primary"

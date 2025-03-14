@@ -31,6 +31,7 @@ import React, {
   PureComponent,
 } from 'react'
 import PropTypes from 'prop-types'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import validateData from 'shared/validateData'
 import itemtype from 'shared/itemtype'
@@ -82,7 +83,6 @@ class UsersEditOne extends PureComponent {
       created: undefined,
       modified: undefined,
       authentication: undefined,
-      active: '0',
     }
   }
 
@@ -121,7 +121,6 @@ class UsersEditOne extends PureComponent {
           needUppercaseCharacter: cfgGlpi.password_need_caps,
           needSymbol: cfgGlpi.password_need_symbol,
         }
-
         this.setState({
           isLoading: false,
           parametersToEvaluate,
@@ -137,7 +136,6 @@ class UsersEditOne extends PureComponent {
           imageProfile: validateData(myUser.picture, 'profile.png'),
           comments: validateData(myUser.comment, ''),
           password: '',
-          active: `${validateData(myUser.is_active, '0')}`,
           passwordConfirmation: '',
           lastLogin: myUser.last_login,
           created: myUser.date_creation,
@@ -237,7 +235,6 @@ class UsersEditOne extends PureComponent {
       profiles_id: this.state.defaultProfile.value,
       begin_date: this.state.validSince,
       end_date: this.state.validUntil,
-      is_active: Number(this.state.active),
     }
 
     let correctPassword = true
@@ -424,14 +421,13 @@ class UsersEditOne extends PureComponent {
         changeEmail: this.changeEmail,
         deleteEmail: this.deleteEmail,
         changeSelect: this.changeSelect,
-        active: this.state.active,
         glpi: this.props.glpi,
       })
 
       componetRender = (
         <div className="froms Profiles">
           <div className="froms__row froms__row--icon">
-            <span className="iconFont viewIcon" />
+            <Icon iconName="View" />
           </div>
 
           <div className="froms__row">
@@ -445,23 +441,25 @@ class UsersEditOne extends PureComponent {
             </div>
           </div>
 
-          <ConstructInputs data={user.personalInformation} icon="contactIcon" />
-          <ConstructInputs data={user.passwordInformation} icon="permissionsIcon" />
-          <ConstructInputs data={user.validDatesInformation} icon="monthIcon" />
-          <ConstructInputs data={user.emailsInformation} icon="emailIcon" />
+          <ConstructInputs data={user.personalInformation} icon="Contact" />
+          <ConstructInputs data={user.passwordInformation} icon="Permissions" />
+          <ConstructInputs data={user.validDatesInformation} icon="Calendar" />
+          <ConstructInputs data={user.emailsInformation} icon="Mail" />
 
-          <button
-            className="win-button"
-            style={{ margin: '20px 0 0 30px' }}
-            onClick={this.addEmail}
-            type="button"
-          >
-            {I18n.t('commons.add_email')}
-          </button>
+          <div style={{ overflow: 'auto', paddingRight: '20px' }}>
+            <button
+              className="win-button"
+              style={{ float: 'right' }}
+              onClick={this.addEmail}
+              type="button"
+            >
+              {I18n.t('commons.add_email')}
+            </button>
+          </div>
 
-          <ConstructInputs data={user.contactInformation} icon="phoneIcon" />
-          <ConstructInputs data={user.moreInformation} icon="detailsIcon" />
-          <ConstructInputs data={user.activityInformation} icon="documentIcon" />
+          <ConstructInputs data={user.contactInformation} icon="Phone" />
+          <ConstructInputs data={user.moreInformation} icon="BulletedList2" />
+          <ConstructInputs data={user.activityInformation} icon="Page" />
 
           <button
             className="btn btn--primary"

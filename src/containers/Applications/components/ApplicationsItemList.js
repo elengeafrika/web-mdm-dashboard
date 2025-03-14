@@ -31,6 +31,7 @@ import React, {
   PureComponent,
 } from 'react'
 import PropTypes from 'prop-types'
+import { Icon } from 'office-ui-fabric-react'
 import IconItemList from 'components/IconItemList'
 
 /**
@@ -66,7 +67,7 @@ export default class ApplicationsItemList extends PureComponent {
             verticalAlign: 'super',
           }}
         >
-          <span className="iconFont documentIcon" />
+          <Icon iconName="Page" />
         </div>
       )
     }

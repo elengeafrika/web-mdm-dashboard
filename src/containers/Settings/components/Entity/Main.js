@@ -55,15 +55,15 @@ class Main extends PureComponent {
             {I18n.t('settings.entity.token_life')}
           </div>
           <div className="list-element__controller">
-            <button
-              className="btn btn-link"
+            <a
               onClick={() => this.props.changeMode('change Token life')}
-              type="button"
+              role="button"
+              tabIndex="0"
             >
               {this.props.tokenLife}
               {' '}
               DAYS
-            </button>
+            </a>
           </div>
         </div>
 

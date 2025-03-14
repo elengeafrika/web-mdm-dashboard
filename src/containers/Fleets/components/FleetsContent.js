@@ -32,6 +32,7 @@ import React, {
 } from 'react'
 import PropTypes from 'prop-types'
 import WinJS from 'winjs'
+import { Icon } from 'office-ui-fabric-react'
 import I18n from 'shared/i18n'
 import itemtype from 'shared/itemtype'
 import publicURL from 'shared/publicURL'
@@ -71,6 +72,7 @@ class FleetsContent extends PureComponent {
         tasksRemove: {},
       },
       devicesLength: 0,
+      hideContentDialog: true,
     }
   }
 
@@ -1052,6 +1054,12 @@ class FleetsContent extends PureComponent {
   }
 
   /**
+   * Show the content dialog
+   * @function showContentDialog
+   */
+  showContentDialog = () => this.setState({ hideContentDialog: false })
+
+  /**
    * Handle remove fleet
    * @function handleDeleteFleet
    * @async
@@ -1168,8 +1176,8 @@ class FleetsContent extends PureComponent {
               {
                   itemType === itemtype.PluginFlyvemdmFleet
                     ? (
-                      <div className="content-header__title">
-                        <h1>
+                      <React.Fragment>
+                        <h1 className="content-header__title">
                           <input
                             type="text"
                             className="win-textbox"
@@ -1188,34 +1196,28 @@ class FleetsContent extends PureComponent {
                           <div>
                             {devicesLength}
                           </div>
-                          <span className="iconFont deviceIcon" />
+                          <Icon iconName="CellPhone" />
                         </div>
-                      </div>
+                      </React.Fragment>
                     )
                     : ''
                 }
               <div className="item-info">
-                <span
-                  className="iconFont saveIcon"
+                <Icon
+                  iconName="Save"
                   onClick={this.handleSaveFleet}
-                  role="button"
-                  tabIndex="0"
                 />
                 {
                   selectedItems.length !== 0 && itemType === itemtype.PluginFlyvemdmFleet
                     ? (
                       <React.Fragment>
-                        <span
-                          className="iconFont copyIcon"
+                        <Icon
+                          iconName="Copy"
                           onClick={this.handleDuplicateFleet}
-                          role="button"
-                          tabIndex="0"
                         />
-                        <span
-                          className="iconFont deleteIcon"
-                          onClick={this.handleDeleteFleet}
-                          role="button"
-                          tabIndex="0"
+                        <Icon
+                          iconName="Delete"
+                          onClick={this.showContentDialog}
                         />
                       </React.Fragment>
                     )
@@ -1231,7 +1233,7 @@ class FleetsContent extends PureComponent {
             <div className="separator" style={{ width: '100%' }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', overflowY: 'auto' }}>
-            <div className="content-info" style={{ width: '100%' }}>
+            <div className="content-info">
               <h3 style={{ margin: '10px' }}>
                 {I18n.t('fleets.tasks_per_Category')}
               </h3>
@@ -1278,9 +1280,15 @@ class FleetsContent extends PureComponent {
             </div>
           </div>
           <Confirmation
+            hideDialog={this.state.hideContentDialog}
             title="Delete Fleets"
             message={`${selectedItems.length} Fleets`}
-            reference={(el) => { this.contentDialog = el }}
+            isOK={() => {
+              this.setState({ hideContentDialog: true }, () => {
+                this.handleDeleteFleet()
+              })
+            }}
+            cancel={() => this.setState({ hideContentDialog: true })}
           />
         </div>
       </ContentPane>
@@ -1291,7 +1299,6 @@ class FleetsContent extends PureComponent {
 FleetsContent.defaultProps = {
   selectedItems: null,
   itemType: null,
-  glpi: null,
 }
 
 FleetsContent.propTypes = {
@@ -1302,9 +1309,6 @@ FleetsContent.propTypes = {
   history: PropTypes.object.isRequired,
   selectedItems: PropTypes.array,
   itemType: PropTypes.string,
-  glpi: PropTypes.object,
-  changeAction: PropTypes.func.isRequired,
-  changeSelectionMode: PropTypes.func.isRequired,
 }
 
 export default FleetsContent

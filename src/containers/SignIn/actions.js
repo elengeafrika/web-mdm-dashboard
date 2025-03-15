@@ -26,31 +26,6 @@
  * ------------------------------------------------------------------------------
  */
 
-
-/**
- * Handle change input value
- * @function changeInput
- * @param {object} ctx
- * @param {object} input
- */
-export const changeInput = (ctx, input) => {
-  ctx.setState({
-    [input.name]: input.value,
-  })
-}
-
-/**
- * Handle change phase
- * @function changePhase
- * @param {object} ctx
- * @param {number} newPhase
- */
-export const changePhase = (ctx, newPhase) => {
-  ctx.setState({
-    phase: newPhase,
-  })
-}
-
 /**
  * Handle form submit
  * @function handleFormSubmit
@@ -58,38 +33,43 @@ export const changePhase = (ctx, newPhase) => {
  * @param {object} event
  */
 export const handleFormSubmit = (ctx, event) => {
-  event.preventDefault()
+  event.preventDefault();
 
-  /**
-   * Implementation of Credential Management API
-   * to save the access data of the users.
-   *
-   * Ref: https://developer.mozilla.org/en-US/docs/Web/API/PasswordCredential
-   */
-  try {
-    navigator.credentials.store(
-      new PasswordCredential({
-        id: ctx.state.username,
-        password: ctx.state.password,
-        name: ctx.state.username,
-      }),
-    )
-  } catch (error) {}
+  // Save credentials locally (for auto-fill)
+  localStorage.setItem('savedUser', JSON.stringify({
+    username: ctx.state.username,
+    password: ctx.state.password,
+  }));
 
-  ctx.props.auth.fetchSignIn(
-    ctx.state.username,
-    ctx.state.password,
-  ).then(() => {
-    ctx.props.toast.setNotification({
-      title: window.appConfig.appName,
-      body: 'Welcome!',
-      type: 'success',
-    })
-  }).catch((error) => {
+  // Send login request
+  fetch('/api/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      username: ctx.state.username,
+      password: ctx.state.password,
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.token) {
+      localStorage.setItem('sessionToken', data.token);
+      ctx.props.toast.setNotification({
+        title: window.appConfig.appName,
+        body: 'Welcome!',
+        type: 'success',
+      });
+    } else {
+      throw new Error(data.message || 'Login failed');
+    }
+  })
+  .catch(error => {
     ctx.props.toast.setNotification(ctx.props.handleMessage({
       type: 'alert',
-      message: error,
+      message: error.message,
       displayErrorPage: false,
-    }))
-  })
-}
+    }));
+  });
+};
